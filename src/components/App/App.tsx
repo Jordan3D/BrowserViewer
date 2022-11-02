@@ -66,9 +66,9 @@ class Folder extends React.PureComponent<PropsItem, { isExpanded: boolean, isRea
 
   componentDidUpdate(prevProps: Readonly<PropsItem>, prevState: Readonly<{ isExpanded: boolean; }>, snapshot?: any): void {
     if(this.props.isExpanded !== prevProps.isExpanded){
-      this.setState((state) => ({...state, isExpanded: !!this.props.isExpanded}));
+      this.setState({isExpanded: !!this.props.isExpanded});
     } else if (this.state.isExpanded !== prevState.isExpanded){
-      this.setState((state) => ({...state, isExpanded: this.state.isExpanded}));
+      this.setState({isExpanded: this.state.isExpanded});
     }
   }
 
@@ -108,7 +108,7 @@ class ViewBrowser extends React.Component<ViewBrowserProps, {inputValue: string}
               this.props.filterByText(text);
             }
         }, 500)
-    this.setState((state) => ({...state, inputValue: e.target.value}))
+    this.setState({inputValue: e.target.value})
   }
 
   render() {

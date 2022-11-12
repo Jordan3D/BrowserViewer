@@ -2,9 +2,8 @@ import React, {memo} from 'react';
 import {  Dispatch } from '@reduxjs/toolkit';
 import { Provider as ReduxProvider, connect, useSelector } from 'react-redux';
 import './App.css';
-import filesAndFolders from '../../data.json';
 import { Data, PropsItem, StoreItem} from '../../types';
-import { store, selectIsFiltering, selectVisibleMap, filterByText } from '../../store';
+import { store, selectIsFiltering, selectVisibleMap, filterByText, setData } from '../../store';
 
 /* FYI
   Because in task description some components are described as classes I made them classes.
@@ -90,11 +89,12 @@ class Folder extends React.PureComponent<PropsItem, { isExpanded: boolean, isRea
   }
 }
 
-interface ViewBrowserProps {expandedFolders?:ReadonlyArray<string>, filterByText(text: string): void};
+interface ViewBrowserProps {data: Data, expandedFolders?:ReadonlyArray<string>, filterByText(text: string): void, setData(data: Data): void};
 class ViewBrowser extends React.Component<ViewBrowserProps, {inputValue: string}> {
   private savedValue: {value: string};
   constructor(props: ViewBrowserProps){
     super(props);
+    this.state = {inputValue: ''};
     this.savedValue = {value: ''};
     this.onChangeInput=this.onChangeInput.bind(this);
   }
@@ -111,21 +111,30 @@ class ViewBrowser extends React.Component<ViewBrowserProps, {inputValue: string}
     this.setState({inputValue: e.target.value})
   }
 
+  async componentDidMount() {
+    const response = await fetch('/data.json');
+    const json = await response.json();
+    this.props.setData(json);
+  }
+
   render() {
     const {expandedFolders} = this.props;
     return <div className='view-browser'>
       <input type="text" onChange={this.onChangeInput}/>
-      <ItemList data={filesAndFolders} rootPath={''} expandedFolders={expandedFolders}/>
+      <ItemList data={this.props.data} rootPath={''} expandedFolders={expandedFolders}/>
     </div>
   }
 }
 
+const mapStateToProps = (state : any) => ({ data: state.data })
+
 const mapDispatchToProps = (dispatch: Dispatch) => ({
+  setData: (data: Data) => dispatch(setData(data)),
   filterByText: (text: string) => dispatch(filterByText(text))
 });
 
 const WrappedViewBrowser = connect(
-  undefined, 
+  mapStateToProps, 
   mapDispatchToProps
 )(ViewBrowser);
 

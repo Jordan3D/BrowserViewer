@@ -23,17 +23,21 @@ const dataToVisibleMap = (tree: Data, parentPath: string, text: string): Record<
   const dataSlice = createSlice({
     name: 'data',
     initialState: {
+      data: [],
       visible: {},
       isFiltering: false
     },
     reducers: {
+      setData: (state, {payload}) => {
+        state.data = payload;
+      },
       filterByText: (state, {payload}) => {
         if(payload === ''){
           state.isFiltering = false
         } else {
           state.isFiltering = true;
-          console.log(payload.toLowerCase());
-          state.visible = dataToVisibleMap(filesAndFolders, '', payload.toLowerCase());
+          console.log(state.data);
+          state.visible = dataToVisibleMap(state.data, '', payload.toLowerCase());
         }
       }
     }
@@ -50,4 +54,4 @@ type RootState = ReturnType<typeof store.getState>
 export const selectVisibleMap = (state: RootState) => state.visible;
 export const selectIsFiltering = (state: RootState) => state.isFiltering;
 
-export const { filterByText } = dataSlice.actions
+export const { filterByText, setData } = dataSlice.actions

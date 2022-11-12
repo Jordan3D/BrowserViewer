@@ -1,5 +1,4 @@
 import { createSlice, configureStore } from '@reduxjs/toolkit';
-import filesAndFolders from '../data.json';
 import { Data } from '../types';
 
 const dataToVisibleMap = (tree: Data, parentPath: string, text: string): Record<string, boolean> => {
